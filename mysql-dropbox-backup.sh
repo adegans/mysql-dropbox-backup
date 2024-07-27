@@ -4,21 +4,14 @@
 # Configuration section                                        #
 #                                                              #
 # Enter your MySQL connection details in the config file shown #
-# below, choose an encryption password and specify which       #
-# databases should not be backed up                            #
+# below, choose which databases should be backed up            #
 ################################################################
 
-# MySQL config file
-config=mysql-dropbox-backup.cnf
+# List of databases to back-up (space separated)
+db_include=(database1 database2 database3)
 
-# Backup file encryption password
-encryption_pass=yourEncryptionPasssword
-
-# List of databases to ignore (space separated)
-db_ignore=(Database information_schema mysql performance_schema)
-
-# Should we backup the MySQL "user" table?
-backup_mysql_user_table=true
+# MySQL config file (Can probably stay as-is)
+config=./mysql-dropbox-backup.cnf
 
 ################################
 # End of configuration section #
@@ -41,9 +34,9 @@ mkdir $current_date
 # Backup each database (omitting any in the ignore list)
 for dbname in ${db_arr}
 do
-    for i in "${db_ignore[@]}"
+    for i in "${db_include[@]}"
     do
-        if ! [[ ${db_ignore[*]} =~ "$dbname" ]] ; then
+        if [[ ${db_include[*]} =~ "$dbname" ]] ; then
             sqlfile=$current_date"/"$dbname".sql"
             echo "Dumping $dbname to $sqlfile"
             mysqldump --defaults-extra-file=$config $dbname > $sqlfile
@@ -52,16 +45,9 @@ do
     done
 done
 
-# And finally, if configured, backup the "users" table from the "mysql" database that is omitted by default
-if [[ "$backup_mysql_user_table" == true ]]; then
-    sqlfile=$current_date"/mysql_users_table.sql"
-    echo "Dumping MySql users table to $sqlfile"
-    mysqldump --defaults-extra-file=$config mysql user > $sqlfile
-fi
-
-# Tar, compress, and encrypt the dumped SQL files
-echo "Compressing and encrypting dumped SQL files..."
-tar cz $current_date | openssl enc -aes-256-cbc -e -iter 30 -k $encryption_pass > $current_date.tar.gz.enc
+# Tar and compress the dumped SQL files
+echo "Compressing dumped SQL files..."
+tar -czf $current_date.tgz ./$current_date
 
 # Remove the backups directory
 echo "Removing dumped SQL files..."
@@ -69,14 +55,14 @@ rm -rf $current_date/
 
 # Upload the backup tarball to Dropbox
 echo "Uploading backup tarball to Dropbox..."
-./dropbox_uploader.sh upload $current_date.tar.gz.enc $current_date.tar.gz.enc
+./dropbox_uploader.sh upload $current_date.tgz $current_date.tgz
 
 # Delete the old backup
 echo "Deleting old Dropbox backup..."
-./dropbox_uploader.sh delete $old_date.tar.gz.enc
+./dropbox_uploader.sh delete $old_date.tgz
 
 # Delete the local copy of the backup tarball that we just created
 echo "Deleting local backup tarball..."
-rm -f $current_date.tar.gz.enc
+rm -f $current_date.tgz
 
 echo "Finished"
