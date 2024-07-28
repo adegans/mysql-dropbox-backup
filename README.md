@@ -1,7 +1,7 @@
 # mysql-dropbox-backup
 
 Dump MySQL databases and compress them before uploading them to [Dropbox] for a simple off-site backup. Backups are kept for 7 days. \
-Forked from [mysql-dropbox-backup] and improved to suit my needs.
+Forked from [mysql-dropbox-backup] and improved/modified to suit my needs.
 
 Mainly, removing the openssl encryption I don't need and switching the db_ignore to a db_include kind of script.
 
@@ -60,6 +60,6 @@ tar xz 2024-06-07.tgz
 Then the SQL files will be available to restore within the resulting directory.
 
    [Dropbox]: <https://www.dropbox.com>
-   [mysql-dropbox-backup]: <https://github.com/andreafabrizi/Dropbox-Uploader>
+   [mysql-dropbox-backup]: <https://github.com/barns101/mysql-dropbox-backup>
    [Dropbox-Uploader]: <https://github.com/andreafabrizi/Dropbox-Uploader>
    [Andrea Fabrizi]: <https://github.com/andreafabrizi>
