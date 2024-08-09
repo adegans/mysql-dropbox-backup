@@ -4,14 +4,15 @@
 # Configuration section                                        #
 #                                                              #
 # Enter your MySQL connection details in the config file shown #
-# below, choose which databases should be backed up            #
+# below, choose an encryption password and specify which       #
+# databases should not be backed up                            #
 ################################################################
 
-# List of databases to back-up (space separated)
-db_include=(database1 database2 database3)
-
 # MySQL config file (Can probably stay as-is)
-config=./mysql-dropbox-backup.cnf
+config=mysql-dropbox-backup.cnf
+
+# List of databases to back-up (space separated)
+db_include=(database_1 database_2 database_3)
 
 ################################
 # End of configuration section #

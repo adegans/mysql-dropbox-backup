@@ -1,9 +1,9 @@
 # mysql-dropbox-backup
 
 Dump MySQL databases and compress them before uploading them to [Dropbox] for a simple off-site backup. Backups are kept for 7 days. \
-Forked from [mysql-dropbox-backup] and improved/modified to suit my needs.
+Forked from [mysql-dropbox-backup] and modified to suit my needs.
 
-Mainly, removing the openssl encryption I don't need and switching the db_ignore to a db_include kind of script.
+Mainly, removing the openssl encryption I don't need and switching the db_ignore to a db_include which makes more sense to me.
 
 ## Overview
 
@@ -11,7 +11,7 @@ Mainly, removing the openssl encryption I don't need and switching the db_ignore
 
 Creating a backup is of-course important. Especially creating an off-site backup can be useful. Should your server burn down or the company that hosts your stuff dissappear.
 
-For myself, I use this to backup WordPress databases. But any kind of MySQL/MariaDB database will work of-course.
+For myself, I use this to backup WordPress databases. But any kind of MySQL/MariaDB database will work.
 
 ## Requirements
 
@@ -45,8 +45,15 @@ Ideally it be run as a daily cron job. After uploading the present backup, it wi
 
 Something like:
 ```
-0 0 * * * /path/to/mysql-dropbox-backup.sh
+0 1 * * * cd /path/to/where/the/scripts/are && sh mysql-dropbox-backup.sh
 ```
+
+Or:
+```
+0 1 * * * cd /path/to/where/the/scripts/are && sh mysql-dropbox-backup.sh>>backup.log
+```
+
+If you want the output in a log file so you can check on its progress later on.
 
 ## Restoring a Backup
 
